@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+  mysql:
+    build: ./mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/dumps/Dump20211102.sql:/docker-entrypoint-initdb.d/dump.sql
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/my.cnf
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+    restart: always
+    container_name: mysql
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.8.3
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+#    environment:
+#      - RABBITMQ_DEFAULT_USER=admin
+#      - RABBITMQ_DEFAULT_PASS=123456
+
+  m1_yolo:
+    build: ./api/m1_yolo
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./api/m1_yolo/output:/opt/object_detection_video/output
+      - ./api/m1_yolo/videos:/opt/object_detection_video/videos
+    restart: always
+    container_name: yolo
+
+  nonvideo_api:
+    build: ./api/nonvideo
+    ports:
+      - "9001:9001"
+#    volumes:
+#      - ./api/m1_yolo/output:/opt/object_detection_video/output
+#      - ./api/m1_yolo/videos:/opt/object_detection_video/videos
+    restart: always
+    container_name: nonvideo_api
+
+  controller:
+    build: ./controller
+#    volumes:
+#      - ./api/m1_yolo/output:/opt/object_detection_video/output
+#      - ./api/m1_yolo/videos:/opt/object_detection_video/videos
+    links:
+      - rabbitmq
+    depends_on:
+      - rabbitmq
+    restart: always
+    command: "python3 wait.py"
+    container_name: controller

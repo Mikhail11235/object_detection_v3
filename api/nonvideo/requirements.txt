@@ -1,0 +1,5 @@
+argparse
+fastapi
+uvicorn
+python-multipart
+mysqlclient

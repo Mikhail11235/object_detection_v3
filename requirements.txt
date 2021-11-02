@@ -1,0 +1,10 @@
+requests
+fastapi
+mysqlclient
+numpy
+argparse
+opencv-python
+imutils
+fastapi
+uvicorn
+pika
