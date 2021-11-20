@@ -2,7 +2,7 @@ import numpy as np
 import imutils
 import cv2
 import time
-from .config import MODEL_PATH, CONFIG_PATH, OUTPUT_PATH, COLORS, LABELS
+from config import MODEL_PATH, CONFIG_PATH, OUTPUT_PATH, COLORS, LABELS
 
 
 def detect_objects(video, confidence_threshold, nms_threshold):

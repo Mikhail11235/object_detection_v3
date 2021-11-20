@@ -2,6 +2,7 @@ numpy == 1.18.5
 argparse
 opencv-python
 imutils
-fastapi
+pika
+requests
 uvicorn
 python-multipart

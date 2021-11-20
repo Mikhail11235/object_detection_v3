@@ -6,7 +6,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./mysql/dumps/Dump20211102.sql:/docker-entrypoint-initdb.d/dump.sql
+      - ./mysql/dumps/Dump20211116.sql:/docker-entrypoint-initdb.d/dump.sql
       - ./mysql/data:/var/lib/mysql
       - ./mysql/my.cnf:/etc/my.cnf
     environment:
@@ -25,35 +25,35 @@ services:
 #      - RABBITMQ_DEFAULT_USER=admin
 #      - RABBITMQ_DEFAULT_PASS=123456
 
+  temporary_storage:
+    build: ./temporary_storage
+    volumes:
+      - ./temporary_storage/output:/opt/temporary_storage/output
+      - ./temporary_storage/input:/opt/temporary_storage/input
+    ports:
+      - "9003:9003"
+    restart: always
+    container_name: temporary_storage
+
+  gateway:
+    build: ./gateway
+#    volumes:
+#      - ./api/m1_yolo/output:/opt/object_detection_video/output
+#      - ./api/m1_yolo/videos:/opt/object_detection_video/videos
+    ports:
+      - "9005:9005"
+    restart: always
+#    command: "python3 wait.py"
+    container_name: gateway
+
   m1_yolo:
     build: ./api/m1_yolo
-    ports:
-      - "9000:9000"
     volumes:
       - ./api/m1_yolo/output:/opt/object_detection_video/output
       - ./api/m1_yolo/videos:/opt/object_detection_video/videos
     restart: always
-    container_name: yolo
-
-  nonvideo_api:
-    build: ./api/nonvideo
-    ports:
-      - "9001:9001"
-#    volumes:
-#      - ./api/m1_yolo/output:/opt/object_detection_video/output
-#      - ./api/m1_yolo/videos:/opt/object_detection_video/videos
-    restart: always
-    container_name: nonvideo_api
-
-  controller:
-    build: ./controller
-#    volumes:
-#      - ./api/m1_yolo/output:/opt/object_detection_video/output
-#      - ./api/m1_yolo/videos:/opt/object_detection_video/videos
     links:
       - rabbitmq
     depends_on:
       - rabbitmq
-    restart: always
-    command: "python3 wait.py"
-    container_name: controller
+    container_name: yolo
