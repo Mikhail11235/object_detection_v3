@@ -9,4 +9,3 @@ while is_continue:
         is_continue = False
     except:
         time.sleep(1)
-        print("fck")
